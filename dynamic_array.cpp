@@ -16,6 +16,7 @@ public:
 	int getSize();
 	bool isFull();
 	int Insert(T element, int index);      // insert element to index. Returns 1 if success, 0 if fails (out of index)
+	int Delete(int index); //return 1 if success, 0 if fail
 	T get(int index);
 	bool isEmpty();
 	void print();
@@ -93,6 +94,16 @@ void Array<T>::print() {
 	}
 }
 
+template<class T>
+int Array<T>::Delete(int index) {
+	if (index >= size) return 0;
+	for (int i = index; i < size - 1; i++) {
+		*(array + i) = *(array + i + 1);
+	}
+	size--;
+	return 1;
+}
+
 int main()
 {
 	Array<int> arr;
@@ -106,6 +117,8 @@ int main()
 	std::cout << "Is Empty: " << arr.isEmpty() << std::endl;
 	std::cout << "Is full: " << arr.isFull() << std::endl;
 	std::cout << "Element at index 4: " << arr.get(4) << std::endl;
+	arr.Delete(4);
+	arr.print();
 	return 0;
 }
 
