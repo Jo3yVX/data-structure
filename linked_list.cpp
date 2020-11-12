@@ -14,9 +14,9 @@ class LinkedList {
 
 public:
 	LinkedList();
-	//~LinkedList();
+	~LinkedList();
 	int length;               // could use
-	bool isEmpty();  
+	bool isEmpty();
 	void print();
 	void pushFront(T value);
 	T topFront();
@@ -24,10 +24,10 @@ public:
 	void pushBack(T value);
 	T topBack();
 	void popBack();
-	bool find(T value);  
-	void erase(T value);
-	//void addBefore(Node node, T value);
-	//void addAfter(Node node, T value);
+	bool find(T value);
+	//void erase(T value);
+	void addBefore(Node node, T value);   // asume that node is existed, not begin or end of linked list (cause it's same as pushFront and pushBack)
+	void addAfter(Node node, T value);		// asume that node is existed, not begin or end of linked list (cause it's same as pushFront and pushBack)
 };
 
 template <class T>
@@ -36,12 +36,17 @@ LinkedList<T>::LinkedList() {
 	head = nullptr;
 	tail = nullptr;
 }
-/*
+
 template <class T>
 LinkedList<T>::~LinkedList() {
-
+	Node<T>* current = head;
+	while (current != nullptr){
+		Node<T>* next = current->nextNode;
+		delete current;
+		current = next;
+	}
 }
-*/
+
 template <class T>
 bool LinkedList<T>::isEmpty() {
 	if (head == nullptr) return true;
@@ -147,7 +152,7 @@ bool LinkedList<T>::find(T value) {
 	if (tempNode->key == value) return true;
 	return false;
 }
-
+/*
 template <class T>
 void LinkedList<T>::erase(T value) {
 	Node<T>* tempNode = head;
@@ -162,6 +167,29 @@ void LinkedList<T>::erase(T value) {
 	}
 
 }
+*/
+
+template <class T>
+void LinkedList<T>::addAfter(Node node, T value){
+	Node<T>* newNode = new Node<T>;
+	newNode->key = value;
+	newNode->nextNode = node->nextNode;
+	node->nextNode = newNode;
+}
+
+template<class T>
+void LinkedList<T>::addBefore(Node node, T value){
+	Node<T>* tempNode = head;
+	while (tempNode->nextNode != node){
+		tempNode = tempNode->nextNode;
+	}
+	Node<T>* newNode = new Node<T>;
+	newNode->key = value;
+	newNode->nextNode = node;
+	tempNode->nextNode = newNode;
+}
+
+
 int main() {
 	LinkedList<int> ll;
 	ll.pushFront(4);
