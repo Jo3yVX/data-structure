@@ -1,5 +1,6 @@
-#include <iostream>
-
+//Tested in CodeBlock 20.03
+#include <bits/stdc++.h>
+#include <tr1/functional>
 using namespace std;
 
 const int MAX = 20;
@@ -19,51 +20,51 @@ public:
 template <class K, class V>
 class HashTable {
 public:
-	int currentSize;  
+	int currentSize;
 	int maxSize;
+    HashNode<K, V>* markDelete;
 	HashNode<K, V>** array;  // array of pointers to node(represented by a pointer), so it's a pointer to pointer (2-level pointer)
 	HashTable() {
 		currentSize = 0;
 		maxSize = MAX;
 		array = new HashNode<K, V>*[maxSize]; // init an array of HashNode, set all elements to nullptr
 		for (int i = 0; i < maxSize; i++) {
-			array[i] = nullptr;
+			array[i] = NULL;
 		}
+		markDelete = new HashNode<K,V>(-1, -1);
 	}
 	~HashTable() {
 		delete[] array;
 	}
-	HashNode<K, V>* markDelete = new HashNode<K, V>(-1, -1);
+
 	void insert(K key, V value);
 	void del(K key);
 	V get(K key);
 	bool isEmpty();
 	bool isFull();
 	void print();
-
-
-private:
 	int hash(K key);
 };
 
 template <class K, class V>
 int HashTable<K, V>::hash(K key) {
-	std::hash<K> hashObj;  //init a hash func for type K
-	auto res = hashObj(key);
+	std::tr1::hash<K> hashObj;  //init a hash func for type K
+	int res = hashObj(key);
+	res = res % maxSize;
 	return res;
 }
 
 template <class K, class V>
 V HashTable<K, V>::get(K key) {
 	int index = hash(key);
-	while (array[index] != nullptr) {
+	while (array[index] != NULL) {
 		if (array[index]->key == key) {
 			return array[index]->value;
 		}
 		index++;
 		index = index % maxSize;
 	}
-	throw "Key doesnt exist";
+	throw 0;
 }
 
 template <class K, class V>
@@ -79,8 +80,8 @@ bool HashTable<K, V>::isFull() {
 template <class K, class V>
 void HashTable<K, V>::print() {
 	for (int i = 0; i < maxSize; i++) {
-		if (array[i] != nullptr && array[i]->key != -1) {  //check if empty(null) or an deleted one
-			cout << array[i]->key << "		:		" << array[i]->value << endl;
+		if (array[i] != NULL && array[i]->key != -1) {  //check if empty(null) or an deleted one
+			cout << "Index: " << i << "      " << array[i]->key << "		:		" << array[i]->value << endl;
 		}
 	}
 	return;
@@ -88,11 +89,11 @@ void HashTable<K, V>::print() {
 
 template <class K, class V>
 void HashTable<K, V>::insert(K key, V value) {
-	if (isFull()) throw "Unable to insert. Table is full.";
+	if (isFull()) return;
 	int count = 0;
 	int index = hash(key);
 	HashNode<K, V>* newNode = new HashNode<K, V>(key, value);
-	while (array[index] != nullptr && array[index]->key != -1 && count < maxSize) {
+	while (array[index] != NULL && array[index]->key != -1 && count < maxSize) {
 		index = (++index) % maxSize;
 		count++;
 	}
@@ -104,7 +105,7 @@ void HashTable<K, V>::insert(K key, V value) {
 template <class K, class V>
 void HashTable<K, V>::del(K key) {
 	int index = hash(key);
-	while (array[index] != nullptr) {
+	while (array[index] != NULL) {
 		if (array[index]->key == key) {
 			array[index] = markDelete;
 			currentSize--;
@@ -112,17 +113,30 @@ void HashTable<K, V>::del(K key) {
 		}
 		index = (++index) % maxSize;
 	}
-	throw "Not exist!";
+	return;
 }
 
+
+int h(int t) {
+	std::tr1::hash<int> g;
+	return g(t) % 20;
+}
 int main() {
-	HashTable<int, int>* table = new HashTable<int, int>;
-	cout << boolalpha << table->isEmpty() << "		" << table->isFull() << endl;
-	table->insert(2, 2);
-	table->insert(17, 4);
-	table->insert(143, 6);
-	table->insert(123, 78);
-	table->print();
-	cout << boolalpha << table->isEmpty();
+	HashTable<int, int> table;
+    cout << boolalpha << table.isFull() << "           " << table.isEmpty() << endl;
+    table.insert(2,2);
+    table.insert(34,14);
+    table.insert(321, 6);
+    table.insert(31, 9);
+    table.insert(22, 43);
+    table.print();
+    table.del(2);
+    cout << "----------------------------------------------------" << endl;
+    table.print();
+    cout << "----------------------------------------------------" << endl;
+    cout << table.get(321) << endl;
+    //cout << table.get(222) << endl;
+    cout << table.currentSize << "   " << table.maxSize;
+    table.~HashTable();
 	return 0;
 }
