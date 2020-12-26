@@ -6,7 +6,7 @@ This project contains many data structures implemented in C++.
 
 + Dynamic Array
 + Linked List 
-+ Hash Table (not done yet)
++ Hash Table 
 
 
 ## Contributing
